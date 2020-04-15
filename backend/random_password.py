@@ -1,37 +1,30 @@
-class RandomGenerator:
-    def __init__(self):
-        pass
+def passwordFullyRandom(length, digits, special):
+    letter_pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    digits_pool = '1234567890'
+    special_pool = '!?-_@&%()[]{}'
 
+    import random
 
-    def generate(self, length, digits, special):
-        self.letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        self.digits = '1234567890'
-        self.special = '!?-_@&%()[]{}'
+    if length == "random":
+        length = random.randint(6, 20)
 
-        import random
+    if digits == "random":
+        digits = random.randint(0, length // 2)
 
-        if length == "random":
-            length = random.randint(6, 20)
-        
-        if digits == "random":
-            digits = random.randint(0, length // 2)
+    if special == "random":
+        special = random.randint(0, length // 2)
 
-        if special == "random":
-            special = random.randint(0, length // 2)
+    password = []
 
-        password = []
-        
-        for i in range(length - digits - special):
-            password.append(random.choice(self.letters))
+    for i in range(length - digits - special):
+        password.append(random.choice(letter_pool))
 
-        for i in range(digits):
-            password.append(random.choice(self.digits))
+    for i in range(digits):
+        password.append(random.choice(digits_pool))
 
-        for i in range(special):
-            password.append(random.choice(self.special))
+    for i in range(special):
+        password.append(random.choice(special_pool))
 
-        random.shuffle(password)
+    random.shuffle(password)
 
-        return ''.join(password)
-
-        
+    return ''.join(password)

@@ -5,8 +5,8 @@ import tkinter.messagebox as tkMessageBox
 from class_buttons import Button
 from class_entry import Entry
 # backend
-from backend.password import PasswordGenerator
-from backend.random_password import RandomGenerator
+from backend.BetterPassword import passwordIncorporatesName
+from backend.random_password import passwordFullyRandom
 # copy
 import pyperclip
 # open links
@@ -113,8 +113,6 @@ class EasyToRemember(tk.Frame):
 
     
     def generate_password(self, temp):
-        appropriate_characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
         try:
             length = int(self.entry_length.get())
         except:
@@ -132,8 +130,7 @@ class EasyToRemember(tk.Frame):
             tkMessageBox.showwarning('Warning', 'Length must be equal to or loger than your name and birth year')
             return
 
-        generator = PasswordGenerator(passwordLength = length, appropriateCharacters = appropriate_characters)
-        password = PasswordGenerator.generateDefaultPassword(PasswordGenerator, length = length, userName = user_name, birth_year = birth_year)
+        password = passwordIncorporatesName(length = length, name = user_name, birth_year = birth_year)
 
         self.entry_password.delete(0, tk.END)
         self.entry_password.insert(tk.END, password)
@@ -188,8 +185,7 @@ class FullyRandom(tk.Frame):
             tkMessageBox.showwarning('Warning', "Length must be greater than or equal 6")
             return
 
-        generator = RandomGenerator()
-        password = generator.generate(length, digits, special)
+        password = passwordFullyRandom(length, digits, special)
 
         self.entry_password.delete(0, tk.END)
         self.entry_password.insert(tk.END, password)
