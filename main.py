@@ -130,6 +130,7 @@ class EasyToRemember(tk.Frame):
 
         if length < len(birth_year) + len(user_name):
             tkMessageBox.showwarning('Warning', 'Length must be equal to or loger than your name and birth year')
+            return
 
         generator = PasswordGenerator(passwordLength = length, appropriateCharacters = appropriate_characters)
         password = PasswordGenerator.generateDefaultPassword(PasswordGenerator, length = length, userName = user_name, birth_year = birth_year)
