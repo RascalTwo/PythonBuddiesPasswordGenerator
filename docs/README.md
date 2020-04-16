@@ -12,6 +12,12 @@ Use `pip` to install libraries listed in `requirements.txt`:
 
 `python3 main.py`
 
+## How to use
+
+Watch this video [here](https://youtu.be/1wepX5_ptTA).
+If you need aditional help, join the [Python Buddies](https://discord.gg/ED8kU5K) Discord server and ask the contributors.
+Also check out the [Repl.it](https://repl.it/@RascalTwo/PythonBuddiesPasswordGenerator).
+
 ## Contributors
 
 If you don't have anything to contribute, check out the [Project Board](../../../projects/1) to find something to help with.
