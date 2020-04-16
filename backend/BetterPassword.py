@@ -1,7 +1,4 @@
-# I tried making a generator which would generate a comparatively easy to remember password
-# This modifies the name and birth year and adds random numbers and variables to make it
-# almost impossible to get the same output twice
-# This is the best way I could come up with regarding the implementation
+# Generates easy to remember password
 def passwordIncorporatesName(length, name, birth_year):
     import random
 
@@ -15,64 +12,55 @@ def passwordIncorporatesName(length, name, birth_year):
     spec = list(special)   # Special characters the program will choose from
 
 
-    m = []  # Will store the users name
-    n = []  # Will store the users birth year
+    user_name = []
+    birth_year = []
     prefix = []
     suffix = []
 
-
-# If name is left blank below line will cause the program to restart
-
     for letter in name:
-        m.append(letter)
-
-
-
-# If birth year is left blank below line will cause the program to restart
+        user_name.append(letter)
 
     for digit in birth_year:
-        n.append(digit)
+        birth_year.append(digit)
 
-#modify certain letters to increase password strength
+    #modify certain letters to increase password strength
 
-    if "0" in n:
-        n[n.index("0")] = "O"
-    if "9" in n:
-        n[n.index("9")] = "P"
-    if "8" in n:
-        n[n.index("8")] = "B"
-    if "3" in n:
-        n[n.index("3")] = "E"
+    if "0" in birth_year:
+        birth_year[birth_year.index("0")] = "O"
+    if "9" in birth_year:
+        birth_year[birth_year.index("9")] = "P"
+    if "8" in birth_year:
+        birth_year[birth_year.index("8")] = "B"
+    if "3" in birth_year:
+        birth_year[birth_year.index("3")] = "E"
 
-# Modify certain characters to increase password strength
+    # Modify certain characters to increase password strength
 
-    if "a" in m:
-        m[m.index("a")] = "@"
-    if "S" in m:
-        m[m.index("S")] = "$"
-    if "i" in m:
-        m[m.index("i")] = "!"
-    if "c" in m:
-        m[m.index("c")] = "("
+    if "a" in user_name:
+        user_name[user_name.index("a")] = "@"
+    if "S" in user_name:
+        user_name[user_name.index("S")] = "$"
+    if "i" in user_name:
+        user_name[user_name.index("i")] = "!"
+    if "c" in user_name:
+        user_name[user_name.index("c")] = "("
 
-# Throughout this program I make use of several random variables to
-# decrease the possibility of getting same password twice
+    # decrease the possibility of getting same password twice
+    # this random variable will decide how many characters will be case swapped
 
     rand2 = random.randrange(1,3,1) #random variable between 1 to 2
-# this random variable will decide how many characters will be case swapped
-
 
     for i in range(0,rand2):
         rand1 = random.randrange(0, len(name), 1) # random index number whose case will be swapped.
 
-# Below 4 line will result in swapping of cases
+        # Below 4 line will result in swapping of cases
 
-        if ord(m[rand1]) >= 97 and ord(m[rand1]) <= 122:
-            m[rand1] = chr(ord(m[rand1]) - 32)
-        elif ord(m[rand1]) >= 65 and ord(m[rand1]) <= 90:
-            m[rand1] = chr(ord(m[rand1]) + 32)
+        if ord(user_name[rand1]) >= 97 and ord(user_name[rand1]) <= 122:
+            user_name[rand1] = chr(ord(user_name[rand1]) - 32)
+        elif ord(user_name[rand1]) >= 65 and ord(user_name[rand1]) <= 90:
+            user_name[rand1] = chr(ord(user_name[rand1]) + 32)
 
-    for i in range(length - len(m) - len(n)): # 4-6 extra characters will be added
+    for i in range(length - len(user_name) - len(birth_year)): # 4-6 extra characters will be added
         flag_list = random.randrange(0,3,1) # Will decide whether extra character will be a prefix or suffix
         flag_char = random.randrange(0,2,1) # Will decide if extra character is a number or special character
 
@@ -88,9 +76,9 @@ def passwordIncorporatesName(length, name, birth_year):
             else:
                 suffix.append(random.choice(spec))
 
-    password = "".join(prefix) + "".join(m) + "".join(n) + "".join(suffix)
+    password = "".join(prefix) + "".join(user_name) + "".join(birth_year) + "".join(suffix)
 
-# If length of password is less than 6 , extra characters will be added to make it longer
+    # If length of password is less than variable length , extra characters will be added to make it longer
 
     if len(password) < length:
         for i in range(0,length-len(password)):
@@ -104,8 +92,8 @@ def passwordIncorporatesName(length, name, birth_year):
     flag_order = random.randrange(0,2) # Will decide the order of joining of different lists
 
     if flag_order == 0:
-        password = "".join(prefix) + "".join(m) + "".join(n) + "".join(suffix)
+        password = "".join(prefix) + "".join(user_name) + "".join(birth_year) + "".join(suffix)
     else:
-        password = "".join(prefix) + "".join(n) + "".join(m) + "".join(suffix)
+        password = "".join(prefix) + "".join(birth_year) + "".join(user_name) + "".join(suffix)
 
     return password
