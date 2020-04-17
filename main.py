@@ -11,18 +11,27 @@ from backend.random_password import passwordFullyRandom
 import pyperclip
 # open links
 import webbrowser
+# read json
+import json
 
 
 # this is the class called when the program starts
 # it inherits a tkinter window
 class Main(tk.Tk):
     def __init__(self):
+
+        self.load_config("config.json")
+
         tk.Tk.__init__(self)
         # basic config
         tk.Tk.wm_geometry(self, '450x700')
         tk.Tk.minsize(self, 450, 700)
         tk.Tk.wm_title(self, 'Python Buddies - Password Generator')
-        tk.Tk.config(self, bg = '#333333') # hex color #333333 is dark gray
+        try:
+            tk.Tk.config(self, bg = self.config['background'])
+        except:
+            tkMessageBox.showwarning('Warning', 'Failed to load config')
+            self.destroy()
         # create variable
         self.current_frame = None
         # set home frame
@@ -36,63 +45,68 @@ class Main(tk.Tk):
             pass
         self.current_frame = frame(self)
         self.current_frame.pack()
+
+    def load_config(self, cfg_file):
+        _file = open(cfg_file, 'r')
+        text = _file.read()
+        self.config = json.loads(text)
     
 
 
 class MainMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.config(self, bg = '#333333')
+        tk.Frame.config(self, bg = master['bg'])
 
-        tk.Label(self, text = 'Password Generator', font = ('Arial', 25, 'bold'), bg = '#333333', fg = '#ffffff').pack(pady = 30)
-        tk.Label(self, bg = '#333333').pack(pady = 25) # spacing
+        tk.Label(self, text = 'Password Generator', font = ('Arial', 25, 'bold'), bg = master['bg'], fg = '#ffffff').pack(pady = 30)
+        tk.Label(self, bg = master['bg']).pack(pady = 25) # spacing
 
         # using custom buttons for the ui
-        Button(root = self, text='Start', command = lambda x: master.switch_frame(SelectMode)).pack(pady = 15)
-        Button(root = self, text='Help', command = lambda x: master.switch_frame(Help)).pack(pady = 15)
-        Button(root = self, text='Exit', command = lambda x: master.destroy()).pack(pady = 15)
+        Button(self, text='Start', command = lambda: master.switch_frame(SelectMode)).pack(pady = 15)
+        Button(self, text='Help', command = lambda: master.switch_frame(Help)).pack(pady = 15)
+        Button(self, text='Exit', command = lambda: master.destroy()).pack(pady = 15)
 
     
 
 class Help(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.config(self, bg = '#333333')
+        tk.Frame.config(self, bg = master['bg'])
 
-        tk.Label(self, text = 'Help', font = ('Arial', 25, 'bold'), bg = '#333333', fg = '#ffffff').pack(pady = 30)
-        tk.Label(self, bg = '#333333').pack(pady = 25) # spacing
+        tk.Label(self, text = 'Help', font = ('Arial', 25, 'bold'), bg = master['bg'], fg = '#ffffff').pack(pady = 30)
+        tk.Label(self, bg = master['bg']).pack(pady = 25) # spacing
 
         github_link = "https://github.com/RascalTwo/PythonBuddiesPasswordGenerator"
         discord_link = "https://discord.gg/ED8kU5K"
 
-        Button(root = self, text='GitHub', command = lambda x: webbrowser.open(github_link)).pack(pady = 15)
-        Button(root = self, text='Discord', command = lambda x: webbrowser.open(discord_link)).pack(pady = 15)
-        Button(root = self, text='Back', command = lambda x: master.switch_frame(MainMenu)).pack(pady = 15)
+        Button(self, text='GitHub', command = lambda: webbrowser.open(github_link)).pack(pady = 15)
+        Button(self, text='Discord', command = lambda: webbrowser.open(discord_link)).pack(pady = 15)
+        Button(self, text='Back', command = lambda: master.switch_frame(MainMenu)).pack(pady = 15)
 
 
 
 class SelectMode(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.config(self, bg = '#333333')
+        tk.Frame.config(self, bg = master['bg'])
 
-        tk.Label(self, text = 'Select mode', font = ('Arial', 25, 'bold'), bg = '#333333', fg = '#ffffff').pack(pady = 30)
-        tk.Label(self, bg = '#333333').pack(pady = 25) # spacing
+        tk.Label(self, text = 'Select mode', font = ('Arial', 25, 'bold'), bg = master['bg'], fg = '#ffffff').pack(pady = 30)
+        tk.Label(self, bg = master['bg']).pack(pady = 25) # spacing
 
         # using custom buttons for the ui
-        Button(root = self, text='Fully Random', command = lambda x: master.switch_frame(FullyRandom)).pack(pady = 15)
-        Button(root = self, text='Easy to Remember', command = lambda x: master.switch_frame(EasyToRemember)).pack(pady = 15)
-        Button(root = self, text='Back', command = lambda x: master.switch_frame(MainMenu)).pack(pady = 15)
+        Button(self, text='Fully Random', command = lambda: master.switch_frame(FullyRandom)).pack(pady = 15)
+        Button(self, text='Easy to Remember', command = lambda: master.switch_frame(EasyToRemember)).pack(pady = 15)
+        Button(self, text='Back', command = lambda: master.switch_frame(MainMenu)).pack(pady = 15)
 
 
 
 class EasyToRemember(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.config(self, bg = '#333333')
+        tk.Frame.config(self, bg = master['bg'])
 
-        tk.Label(self, text = 'Easy to remember', font = ('Arial', 25, 'bold'), bg = '#333333', fg = '#ffffff').pack(pady = 30)
-        tk.Label(self, bg = '#333333').pack(pady = 25) # spacing
+        tk.Label(self, text = 'Easy to remember', font = ('Arial', 25, 'bold'), bg = master['bg'], fg = '#ffffff').pack(pady = 30)
+        tk.Label(self, bg = master['bg']).pack(pady = 25) # spacing
 
         self.entry_length = Entry(self, alt_text='Password length')
         self.entry_length.pack(pady = 10)
@@ -103,13 +117,13 @@ class EasyToRemember(tk.Frame):
         self.entry_year = Entry(self, alt_text='Your birth year')
         self.entry_year.pack(pady = 10)
 
-        Button(root = self, text='Confirm', command = lambda x: self.generate_password(None)).pack(pady = 15)
+        Button(self, text='Confirm', command = lambda: self.generate_password(None)).pack(pady = 15)
 
         self.entry_password = tk.Entry(self, font = ("Arial", 18, "bold"), bg = "#a8a8a8", fg = "#181818", borderwidth = 2, relief = "solid")
         self.entry_password.pack(pady = 15)
 
-        Button(root = self, text='Copy', command = lambda x: pyperclip.copy(self.entry_password.get())).pack(pady = 15)
-        Button(root = self, text='Back', command = lambda x: master.switch_frame(SelectMode)).pack(pady = 15)
+        Button(self, text='Copy', command = lambda: pyperclip.copy(self.entry_password.get())).pack(pady = 15)
+        Button(self, text='Back', command = lambda: master.switch_frame(SelectMode)).pack(pady = 15)
 
     
     def generate_password(self, temp):
@@ -141,10 +155,10 @@ class EasyToRemember(tk.Frame):
 class FullyRandom(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.config(self, bg = '#333333')
+        tk.Frame.config(self, bg = master['bg'])
 
-        tk.Label(self, text = 'Fully Random Password', font = ('Arial', 25, 'bold'), bg = '#333333', fg = '#ffffff').pack(pady = 30)
-        tk.Label(self, bg = '#333333').pack(pady = 25) # spacing
+        tk.Label(self, text = 'Fully Random Password', font = ('Arial', 25, 'bold'), bg = master['bg'], fg = '#ffffff').pack(pady = 30)
+        tk.Label(self, bg = master['bg']).pack(pady = 25) # spacing
 
         self.entry_length = Entry(self, alt_text='Password length')
         self.entry_length.pack(pady = 10)
@@ -155,13 +169,13 @@ class FullyRandom(tk.Frame):
         self.entry_special = Entry(self, alt_text='Number of special')
         self.entry_special.pack(pady = 10)
 
-        Button(root = self, text='Confirm', command = self.generate_password).pack(pady = 15)
+        Button(self, text='Confirm', command = self.generate_password).pack(pady = 15)
 
         self.entry_password = tk.Entry(self, font = ("Arial", 18, "bold"), bg = "#a8a8a8", fg = "#181818", borderwidth = 2, relief = "solid")
         self.entry_password.pack(pady = 15)
 
-        Button(root = self, text='Copy', command = lambda x: pyperclip.copy(self.entry_password.get())).pack(pady = 15)
-        Button(root = self, text='Back', command = lambda x: master.switch_frame(SelectMode)).pack(pady = 15)
+        Button(self, text='Copy', command = lambda: pyperclip.copy(self.entry_password.get())).pack(pady = 15)
+        Button(self, text='Back', command = lambda: master.switch_frame(SelectMode)).pack(pady = 15)
 
     
     def generate_password(self, temp):
