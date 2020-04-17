@@ -36,6 +36,7 @@ class ImageButton(tk.Button):
 			font=kwargs.pop('font', ('Arial', 18, 'bold')),
 			bg=bg,
 			activebackground=bg,
+			activeforeground=kwargs.pop('fg', bg),
 			compound=kwargs.pop('compound', 'center'),
 			borderwidth=0,
 			highlightthickness=0,
@@ -65,9 +66,3 @@ class ImageButton(tk.Button):
 		for image, events in ((image, events) for image, events in self.image_events.items() if image):
 			for event in events:
 				self.bind(event, lambda _, image=image: self.config(image=image))
-
-
-class Button(ImageButton):
-	"""Pre-styled image button"""
-	def __init__(self, *args, **kwargs):
-		super().__init__(image_paths=['images/normal_button.png', 'images/hovered_button.png', 'images/pressed_button.png'], *args, **kwargs)

@@ -2,7 +2,7 @@
 
 import tkinter as tk
 
-class Entry(tk.Entry):
+class CustomEntry(tk.Entry):
 	"""Custom entry field with placeholder text"""
 	def __init__(self, *args, alt_text=None, alt_fg='#505050', fg='#181818', bg='#a8a8a8', font=('Arial', 18, 'bold'), borderwidth=2, relief=tk.SOLID, **kwargs):
 		self.alt_text = alt_text

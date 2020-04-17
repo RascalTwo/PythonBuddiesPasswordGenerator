@@ -2,8 +2,8 @@
 import tkinter as tk
 import tkinter.messagebox as tkMessageBox
 # custom classes made to create good looking buttons and entries
-from class_buttons import Button
-from class_entry import Entry
+from class_buttons import ImageButton
+from class_entry import CustomEntry
 # backend
 from backend.BetterPassword import passwordIncorporatesName
 from backend.random_password import passwordFullyRandom
@@ -14,6 +14,32 @@ import webbrowser
 # read json
 import json
 
+
+
+# Widget <- Frame <- Main
+#           master . master
+class Button(ImageButton):
+	"""Pre-styled image button"""
+	def __init__(self, master, *args, **kwargs):
+		super().__init__(
+			master,
+			image_paths=['images/normal_button.png', 'images/hovered_button.png', 'images/pressed_button.png'],
+			bg=kwargs.pop('bg', master.master.config['background']),
+            fg=kwargs.pop('fg', master.master.config['button_foreground']),
+			*args,
+			**kwargs
+		)
+
+class Entry(CustomEntry):
+	def __init__(self, master, *args, **kwargs):
+		super().__init__(
+			master,
+			alt_fg=kwargs.pop('alt_fg', master.master.config['entry_alt_foreground']),
+			fg=kwargs.pop('fg', master.master.config['entry_foreground']),
+			bg=kwargs.pop('bg', master.master.config['entry_background']),
+			*args,
+			**kwargs
+		)
 
 # this is the class called when the program starts
 # it inherits a tkinter window
@@ -118,7 +144,7 @@ class EasyToRemember(tk.Frame):
         self.entry_year = Entry(self, alt_text='Your birth year')
         self.entry_year.pack(pady = 10)
 
-        Button(self, text='Confirm', command = lambda: self.generate_password(None)).pack(pady = 15)
+        Button(self, text='Confirm', command = self.generate_password).pack(pady = 15)
 
         self.entry_password = Entry(self, alt_text = "")
         self.entry_password.pack(pady = 15)
@@ -127,7 +153,7 @@ class EasyToRemember(tk.Frame):
         Button(self, text='Back', command = lambda: master.switch_frame(SelectMode)).pack(pady = 15)
 
     
-    def generate_password(self, temp):
+    def generate_password(self):
         try:
             length = int(self.entry_length.get())
         except:
@@ -179,7 +205,7 @@ class FullyRandom(tk.Frame):
         Button(self, text='Back', command = lambda: master.switch_frame(SelectMode)).pack(pady = 15)
 
     
-    def generate_password(self, temp):
+    def generate_password(self):
         try:
             length = int(self.entry_length.get())
             digits = int(self.entry_digits.get())
