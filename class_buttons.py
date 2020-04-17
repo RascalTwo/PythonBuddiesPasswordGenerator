@@ -1,25 +1,88 @@
 """Custom image-based buttons with animations"""
 
 import tkinter as tk
+import colorsys
 
 # To avoid creating a new image for each state, this opt-out cache is available.
 IMAGE_CACHE = {}
 
-def load_images(normal=None, hover=None, pressed=None, cache=True):
-	"""Return images - either from cache or from filepaths"""
-	return (
-		[IMAGE_CACHE.setdefault(filepath, tk.PhotoImage(file=filepath)) for filepath in (normal, hover, pressed)]
-		if cache else
-		[tk.PhotoImage(file=filepath) for filepath in (normal, hover, pressed)]
-	)
+
+def load_images(desired, normal=None, hover=None, pressed=None, cache=True):
+	"""Return images - either from cache or from filepaths
+
+	The type of desired determines how to set the image colors:
+		int: Hue
+		sequence: RGBA
+	"""
+	filepaths = normal, hover, pressed
+
+	try:
+		from PIL import ImageTk, Image
+	except:
+		print('Unable to use custom image colors as "Pillow" has not been installed')
+		return (
+			[IMAGE_CACHE.setdefault(filepath, tk.PhotoImage(file=filepath)) for filepath in filepaths]
+			if cache else
+			[tk.PhotoImage(file=filepath) for filepath in filepaths]
+		)
+
+	# Attempt to use cache
+	cache_names = [f'{filepath}_{desired!s}' for filepath in filepaths]
+	if all(cache_name in IMAGE_CACHE for cache_name in cache_names):
+		return [IMAGE_CACHE[cache_name] for cache_name in cache_names]
+
+	is_hue = isinstance(desired, int)
+
+	adjusted = []
+	for image in (Image.open(filepath).convert('RGBA') for filepath in filepaths):
+		if is_hue:
+			# Extract alpha channel, convert to HSV, set H to hue, convert to RGB, merge alpha channel back in
+			alpha = image.getchannel('A')
+			image = image.convert('HSV')
+
+			pixels = image.load()
+			for i in range(image.size[0]):
+				for j in range(image.size[1]):
+					# Only change hue
+					pixels[i,j] = (desired, *pixels[i,j][1:])
+
+			rgb = image.convert('RGB').split()
+			image = Image.merge('RGBA', (*rgb, alpha))
+
+		else:
+			# Get RGB difference between center pixel and desired color, only factoring in Hue,
+			# then modify all pixels by that difference.
+			pixels = image.load()
+			center = pixels[tuple(cord // 2 for cord in image.size)]
+			print(center)
+
+			# Get H from desired and SL from center
+			_, saturation, lightness = colorsys.rgb_to_hsv(center[0], center[1], center[2])
+			hue, _, __ = colorsys.rgb_to_hsv(desired[0], desired[1], desired[2])
+
+			# Convert HSV floats to ints, calculate diff between colors
+			rgb = map(int, colorsys.hsv_to_rgb(hue, saturation, lightness))
+			changes = tuple(offset - center[i] for i, offset in enumerate((*rgb, desired[3])))
+
+			for i in range(image.size[0]):
+				for j in range(image.size[1]):
+					pixels[i,j] = tuple(pixels[i,j][k] + changes[k] for k in range(4))
+
+		adjusted.append(image)
+
+	# Add to cache
+	photo_images = [ImageTk.PhotoImage(image) for image in adjusted]
+	for i in range(len(filepaths)):
+		IMAGE_CACHE[cache_names[i]] = photo_images[i]
+	return photo_images
 
 
 class ImageButton(tk.Button):
 	"""Button with image-based animations"""
-	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], **kwargs):
+	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], color=14, **kwargs):
 		image_paths = image_paths or []
 
-		normal, hover, pressed = load_images(*image_paths, cache=not disable_cache)
+		normal, hover, pressed = load_images(color, *image_paths, cache=not disable_cache)
 		self.image_events = {
 			normal: ('<ButtonRelease-1>', '<Leave>', '<FocusOut>'),
 			hover: ('<Enter>', '<FocusIn>'),

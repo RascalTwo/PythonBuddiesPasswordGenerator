@@ -5,5 +5,6 @@
     "entry_foreground":"#181818",
     "entry_alt_foreground":"#505050",
     "button_foreground":"#ffffff",
-    "button_active_foreground":"#ffffff"
+    "button_active_foreground":"#ffffff",
+    "button_color": 14
 }

@@ -27,6 +27,7 @@ class Button(ImageButton):
 			bg=kwargs.pop('bg', master.master.config['background']),
             fg=kwargs.pop('fg', master.master.config['button_foreground']),
             activeforeground=kwargs.pop('activeforeground', master.master.config['button_active_foreground']),
+            color=kwargs.pop('color', master.master.config['button_color']),
 			*args,
 			**kwargs
 		)
