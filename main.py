@@ -26,6 +26,7 @@ class Button(ImageButton):
 			image_paths=['images/normal_button.png', 'images/hovered_button.png', 'images/pressed_button.png'],
 			bg=kwargs.pop('bg', master.master.config['background']),
             fg=kwargs.pop('fg', master.master.config['button_foreground']),
+            activeforeground=kwargs.pop('activeforeground', master.master.config['button_active_foreground']),
 			*args,
 			**kwargs
 		)

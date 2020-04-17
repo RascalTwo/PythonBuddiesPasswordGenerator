@@ -36,7 +36,7 @@ class ImageButton(tk.Button):
 			font=kwargs.pop('font', ('Arial', 18, 'bold')),
 			bg=bg,
 			activebackground=bg,
-			activeforeground=kwargs.pop('fg', bg),
+			activeforeground=kwargs.pop('activeforeground', kwargs.get('fg', bg)),
 			compound=kwargs.pop('compound', 'center'),
 			borderwidth=0,
 			highlightthickness=0,
