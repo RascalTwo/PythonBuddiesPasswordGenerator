@@ -1,3 +1,8 @@
 {
-    "background":"#333333"
+    "background":"#333333",
+    "foreground":"#ffffff",
+    "entry_background":"a8a8a8",
+    "entry_foreground":"#181818",
+    "entry_alt_foreground":"#505050",
+    "button_foreground":"#ffffff"
 }
