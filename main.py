@@ -186,7 +186,7 @@ class FullyRandom(tk.Frame):
         self.entry_password.pack(pady=15)
 
         Button(self, text='Copy', command=lambda: pyperclip.copy(self.entry_password.get())).pack(pady=15)
-        Button(self, text='Back', command1=lambda: master.switch_frame(SelectMode)).pack(pady=15)
+        Button(self, text='Back', command=lambda: master.switch_frame(SelectMode)).pack(pady=15)
 
 
     def generate_password(self):
