@@ -13,7 +13,8 @@ class Main(tk.Tk):
     def __init__(self):
 
         self.style_config = {}
-        self.load_config('config.json')
+        self.config_file = 'config.json'
+        self.load_config(self.config_file)
 
         tk.Tk.__init__(self)
         # basic config
@@ -55,7 +56,7 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, master)
         tk.Frame.config(self, bg=master['bg'])
 
-        self.load_config('config.json')
+        self.load_config(master.config_file)
 
         try:
             tk.Tk.config(self, bg=self.style_config['background'])
