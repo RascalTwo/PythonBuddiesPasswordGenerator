@@ -81,13 +81,15 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True, mast
 
 
 class ImageButton(tk.Button):
+	_focus_losing = ('<ButtonRelease-1>', '<Leave>', '<FocusOut>')
+
 	"""Button with image-based animations"""
 	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], color=14, **kwargs):
 		image_paths = image_paths or []
 
 		normal, hover, pressed = load_images(color, *image_paths, cache=not disable_cache, master=kwargs.get('master', args[0]))
 		self.image_events = {
-			normal: ('<ButtonRelease-1>', '<Leave>', '<FocusOut>'),
+			normal: self._focus_losing,
 			hover: ('<Enter>', '<FocusIn>'),
 			pressed: ('<Button-1>', )
 		}
@@ -111,6 +113,13 @@ class ImageButton(tk.Button):
 		)
 		self.disabled = disabled
 		self.bind('<Return>', lambda _: self.invoke())
+		self.bind('<KP_Enter>', lambda _: self.invoke())
+
+	def _handle_event(self, event, image):
+		"""Handle event, properly handling mutiple interactions while focused"""
+		if self.focus_get() == self and event in self._focus_losing:
+			return
+		self.configure(image=image)
 
 	@property
 	def disabled(self):
@@ -131,4 +140,4 @@ class ImageButton(tk.Button):
 
 		for image, events in ((image, events) for image, events in self.image_events.items() if image):
 			for event in events:
-				self.bind(event, lambda _, image=image: self.config(image=image))
+				self.bind(event, lambda _, event=event, image=image: self._handle_event(event, image))
