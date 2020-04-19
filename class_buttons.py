@@ -7,7 +7,10 @@ import colorsys
 IMAGE_CACHE = {}
 
 
-def load_images(desired, normal=None, hover=None, pressed=None, cache=True):
+def get_cache_name(filepath, desired, master):
+	return filepath + '_' + str(id(master)) + '_' + str(desired)
+
+def load_images(desired, normal=None, hover=None, pressed=None, cache=True, master=None):
 	"""Return images - either from cache or from filepaths
 
 	The type of desired determines how to set the image colors:
@@ -18,16 +21,16 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True):
 
 	try:
 		from PIL import ImageTk, Image
-	except:
+	except ModuleNotFoundError:
 		print('Unable to use custom image colors as "Pillow" has not been installed')
 		return (
-			[IMAGE_CACHE.setdefault(filepath, tk.PhotoImage(file=filepath)) for filepath in filepaths]
+			[IMAGE_CACHE.setdefault(get_cache_name(filepath, desired, master), tk.PhotoImage(file=filepath, master=master)) for filepath in filepaths]
 			if cache else
-			[tk.PhotoImage(file=filepath) for filepath in filepaths]
+			[tk.PhotoImage(file=filepath, master=master) for filepath in filepaths]
 		)
 
 	# Attempt to use cache
-	cache_names = [f'{filepath}_{desired!s}' for filepath in filepaths]
+	cache_names = [get_cache_name(filepath, desired, master) for filepath in filepaths]
 	if all(cache_name in IMAGE_CACHE for cache_name in cache_names):
 		return [IMAGE_CACHE[cache_name] for cache_name in cache_names]
 
@@ -71,7 +74,7 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True):
 		adjusted.append(image)
 
 	# Add to cache
-	photo_images = [ImageTk.PhotoImage(image) for image in adjusted]
+	photo_images = [ImageTk.PhotoImage(image, master=master) for image in adjusted]
 	for i in range(len(filepaths)):
 		IMAGE_CACHE[cache_names[i]] = photo_images[i]
 	return photo_images
@@ -82,7 +85,7 @@ class ImageButton(tk.Button):
 	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], color=14, **kwargs):
 		image_paths = image_paths or []
 
-		normal, hover, pressed = load_images(color, *image_paths, cache=not disable_cache)
+		normal, hover, pressed = load_images(color, *image_paths, cache=not disable_cache, master=kwargs.get('master', args[0]))
 		self.image_events = {
 			normal: ('<ButtonRelease-1>', '<Leave>', '<FocusOut>'),
 			hover: ('<Enter>', '<FocusIn>'),
