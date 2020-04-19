@@ -21,8 +21,12 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True, mast
 
 	try:
 		from PIL import ImageTk, Image
-	except ModuleNotFoundError:
-		print('Unable to use custom image colors as "Pillow" has not been installed')
+		if desired is None:
+			raise Exception()
+	except (ModuleNotFoundError, Exception) as exception:
+		if isinstance(exception, ModuleNotFoundError):
+			print('Unable to use custom image colors as "Pillow" has not been installed')
+
 		return (
 			[IMAGE_CACHE.setdefault(get_cache_name(filepath, desired, master), tk.PhotoImage(file=filepath, master=master)) for filepath in filepaths]
 			if cache else
@@ -81,13 +85,14 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True, mast
 
 
 class ImageButton(tk.Button):
+	"""Button with image-based animations"""
+
 	_focus_losing = ('<ButtonRelease-1>', '<Leave>', '<FocusOut>')
 
-	"""Button with image-based animations"""
-	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], color=14, **kwargs):
+	def __init__(self, *args, image_paths=None, disable_cache=False, cursors=['hand1', 'X_cursor'], color=None, **kwargs):
 		image_paths = image_paths or []
 
-		normal, hover, pressed = load_images(color, *image_paths, cache=not disable_cache, master=kwargs.get('master', args[0]))
+		normal, hover, pressed = load_images(image_paths, color, not disable_cache, kwargs.get('master', args[0]))
 		self.image_events = {
 			normal: self._focus_losing,
 			hover: ('<Enter>', '<FocusIn>'),

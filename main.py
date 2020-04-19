@@ -2,8 +2,7 @@
 import tkinter as tk
 import tkinter.messagebox as tkMessageBox
 # custom classes made to create good looking buttons and entries
-from class_buttons import ImageButton
-from class_entry import CustomEntry
+from styled_widgets import Button, Entry
 # backend
 from backend.BetterPassword import passwordIncorporatesName
 from backend.random_password import passwordFullyRandom
@@ -13,35 +12,6 @@ import pyperclip
 import webbrowser
 # read json
 import json
-
-
-
-# Widget <- Frame <- Main
-#           master . master
-class Button(ImageButton):
-	"""Pre-styled image button"""
-	def __init__(self, master, *args, **kwargs):
-		super().__init__(
-			master,
-			image_paths=['images/normal_button.png', 'images/hovered_button.png', 'images/pressed_button.png'],
-			bg=kwargs.pop('bg', master.master.config['background']),
-            fg=kwargs.pop('fg', master.master.config['button_foreground']),
-            activeforeground=kwargs.pop('activeforeground', master.master.config['button_active_foreground']),
-            color=kwargs.pop('color', master.master.config['button_color']),
-			*args,
-			**kwargs
-		)
-
-class Entry(CustomEntry):
-	def __init__(self, master, *args, **kwargs):
-		super().__init__(
-			master,
-			alt_fg=kwargs.pop('alt_fg', master.master.config['entry_alt_foreground']),
-			fg=kwargs.pop('fg', master.master.config['entry_foreground']),
-			bg=kwargs.pop('bg', master.master.config['entry_background']),
-			*args,
-			**kwargs
-		)
 
 # this is the class called when the program starts
 # it inherits a tkinter window
@@ -56,8 +26,8 @@ class Main(tk.Tk):
         tk.Tk.minsize(self, 450, 700)
         tk.Tk.wm_title(self, 'Python Buddies - Password Generator')
         try:
-            tk.Tk.config(self, bg = self.config['background'])
-            tk.Tk.fg = self.config['foreground']
+            tk.Tk.config(self, bg = self.style_config['background'])
+            tk.Tk.fg = self.style_config['foreground']
         except:
             tkMessageBox.showwarning('Warning', 'Failed to load config')
             self.destroy()
@@ -78,7 +48,7 @@ class Main(tk.Tk):
     def load_config(self, cfg_file):
         _file = open(cfg_file, 'r')
         text = _file.read()
-        self.config = json.loads(text)
+        self.style_config = json.loads(text)
     
 
 

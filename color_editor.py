@@ -1,37 +1,10 @@
 import tkinter as tk
 import tkinter.colorchooser as tkColorChooser
 import tkinter.messagebox as tkMessageBox
-from class_buttons import ImageButton
-from class_entry import CustomEntry
+from styled_widgets import Button, Entry
 import json
 from PIL import ImageColor
 import colorsys
-
-
-class Button(ImageButton):
-	"""Pre-styled image button"""
-	def __init__(self, master, *args, **kwargs):
-		super().__init__(
-			master,
-			image_paths=['images/normal_button.png', 'images/hovered_button.png', 'images/pressed_button.png'],
-			bg=kwargs.pop('bg', master.config['background']),
-            fg=kwargs.pop('fg', master.config['button_foreground']),
-            activeforeground=kwargs.pop('activeforeground', master.config['button_active_foreground']),
-            color=kwargs.pop('color', master.config['button_color']),
-			*args,
-			**kwargs
-		)
-
-class Entry(CustomEntry):
-	def __init__(self, master, *args, **kwargs):
-		super().__init__(
-			master,
-			alt_fg=kwargs.pop('alt_fg', master.config['entry_alt_foreground']),
-			fg=kwargs.pop('fg', master.config['entry_foreground']),
-			bg=kwargs.pop('bg', master.config['entry_background']),
-			*args,
-			**kwargs
-		)
 
 
 class Main(tk.Tk):
@@ -46,8 +19,8 @@ class Main(tk.Tk):
         tk.Tk.wm_resizable(self, False, False)
         tk.Tk.wm_title(self, 'Python Buddies - Password Generator')
         try:
-            tk.Tk.config(self, bg = self.config['background'])
-            tk.Tk.fg = self.config['foreground']
+            tk.Tk.config(self, bg = self.style_config['background'])
+            tk.Tk.fg = self.style_config['foreground']
         except:
             tkMessageBox.showwarning('Warning', 'Failed to load config')
             self.destroy()
@@ -68,7 +41,7 @@ class Main(tk.Tk):
     def load_config(self, cfg_file):
         _file = open(cfg_file, 'r')
         text = _file.read()
-        self.config = json.loads(text)
+        self.style_config = json.loads(text)
     
 
 
@@ -81,50 +54,50 @@ class MainMenu(tk.Frame):
         self.load_config(self.config_file)
 
         try:
-            tk.Tk.config(self, bg = self.config['background'])
-            tk.Tk.fg = self.config['foreground']
+            tk.Tk.config(self, bg = self.style_config['background'])
+            tk.Tk.fg = self.style_config['foreground']
         except:
             tkMessageBox.showwarning('Warning', 'Failed to load config')
             self.destroy()
 
         self._master = master
-        container = tk.Frame(self, bg = self.config['background'])
+        container = tk.Frame(self, bg = self.style_config['background'])
         container.pack()
 
-        tk.Label(container, text = "Background", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 0, column = 0)
+        tk.Label(container, text = "Background", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 0, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("background")).grid(row = 0, column = 1)
 
-        tk.Label(container, text = "Foreground", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 1, column = 0)
+        tk.Label(container, text = "Foreground", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 1, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("foreground")).grid(row = 1, column = 1)
 
-        tk.Label(container, text = "Entry Background", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 2, column = 0)
+        tk.Label(container, text = "Entry Background", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 2, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("entry_background")).grid(row = 2, column = 1)
 
-        tk.Label(container, text = "Entry Foreground", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 3, column = 0)
+        tk.Label(container, text = "Entry Foreground", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 3, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("entry_foreground")).grid(row = 3, column = 1)
 
-        tk.Label(container, text = "Entry Alt Foreground", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 4, column = 0)
+        tk.Label(container, text = "Entry Alt Foreground", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 4, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("entry_alt_foreground")).grid(row = 4, column = 1)
 
-        tk.Label(container, text = "Button Foreground", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 5, column = 0)
+        tk.Label(container, text = "Button Foreground", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 5, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("button_foreground")).grid(row = 5, column = 1)
 
-        tk.Label(container, text = "Button Active Foreground", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 6, column = 0)
+        tk.Label(container, text = "Button Active Foreground", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 6, column = 0)
         tk.Button(container, text = "Select", font = ("Arial", 20, "bold"), command = lambda: self.select_color("button_active_foreground")).grid(row = 6, column = 1)
 
         self.button_colors = ["Red", "Yellow", "Green", "Cyan", "Light Blue", "Blue", "Purple", "Pink"]
         self.button_color = tk.StringVar(self)
-        tk.Label(container, text = "Button Color", font = ("Arial", 20, "bold"), bg = self.config['background'], fg = self.config['foreground']).grid(row = 7, column = 0)
+        tk.Label(container, text = "Button Color", font = ("Arial", 20, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).grid(row = 7, column = 0)
         tk.OptionMenu(container, self.button_color, *self.button_colors, command = lambda x: self.select_color("button_color")).grid(row = 7, column = 1)
 
-        tk.Label(self, text = "Preview", font = ("Arial", 35, "bold"), bg = self.config['background'], fg = self.config['foreground']).pack()
+        tk.Label(self, text = "Preview", font = ("Arial", 35, "bold"), bg = self.style_config['background'], fg = self.style_config['foreground']).pack()
         self.btn = Button(self, text = "Button")
         self.btn.pack(pady = 5)
         self.ent1 = Entry(self, alt_text = "Alternate text")
         self.ent1.pack(pady = 5)
         self.ent2 = Entry(self, alt_text = "Alternate text")
         self.ent2.pack(pady = 5)
-        tk.Label(self, font = ("Arial", 50, "bold"), bg = self.config['background']).pack(side = "bottom")
+        tk.Label(self, font = ("Arial", 50, "bold"), bg = self.style_config['background']).pack(side = "bottom")
 
         #------------------------------------
     def select_color(self, key):
@@ -141,9 +114,9 @@ class MainMenu(tk.Frame):
 
         
 
-        self.config[key] = color
+        self.style_config[key] = color
         _file = open(self._master.config_file, 'w')
-        _file.write(json.dumps(self.config))
+        _file.write(json.dumps(self.style_config))
         _file.close()
         self._master.switch_frame(MainMenu)
         self.reset_custom_widgets()
@@ -153,7 +126,7 @@ class MainMenu(tk.Frame):
     def load_config(self, cfg_file):
         _file = open(cfg_file, 'r')
         text = _file.read()
-        self.config = json.loads(text)
+        self.style_config = json.loads(text)
 
     def reset_custom_widgets(self):
         self.btn.pack_forget()
