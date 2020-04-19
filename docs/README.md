@@ -12,6 +12,8 @@ Use `pip` to install libraries listed in `requirements.txt`:
 
 `python3 main.py`
 
+To edit the style colors, either open `config.json` or run `python3 color_editor.py`
+
 ## How to use
 
 Watch this video [here](https://youtu.be/1wepX5_ptTA).
