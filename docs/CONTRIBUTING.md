@@ -32,4 +32,4 @@ Automation for these are coming soon - perhaps you could be the one to add them?
   - `coverage report`
   - `coverage html`
 - [pylint](https://www.pylint.org/) linting:
-  - `python3 -m pylint --disable=mixed-indentation,line-too-long,too-many-ancestors --indent-string='\t' --indent-after-paren=1 --good-names='fg,bg' **/*.py`
+  - `python3 -m pylint --disable=mixed-indentation,line-too-long,too-many-ancestors,duplicate-code --indent-string='\t' --indent-after-paren=1 --good-names='fg,bg,x,y,i' **/*.py`
