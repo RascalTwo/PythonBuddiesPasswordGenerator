@@ -1,9 +1,12 @@
+"""Generator of fully random passwords"""
+import random
+
+# pylint: disable=invalid-name
 def passwordFullyRandom(length, digits, special):
+    """Generate fully-random password"""
     letter_pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     digits_pool = '1234567890'
     special_pool = '!?-_@&%()[]{}'
-
-    import random
 
     if length == "random":
         length = random.randint(6, 20)
@@ -16,13 +19,13 @@ def passwordFullyRandom(length, digits, special):
 
     password = []
 
-    for i in range(length - digits - special):
+    for _ in range(length - digits - special):
         password.append(random.choice(letter_pool))
 
-    for i in range(digits):
+    for _ in range(digits):
         password.append(random.choice(digits_pool))
 
-    for i in range(special):
+    for _ in range(special):
         password.append(random.choice(special_pool))
 
     random.shuffle(password)

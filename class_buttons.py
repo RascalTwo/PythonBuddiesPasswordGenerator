@@ -8,22 +8,66 @@ IMAGE_CACHE = {}
 
 
 def get_cache_name(filepath, desired, master):
+	"""Get cache name of image"""
 	return filepath + '_' + str(id(master)) + '_' + str(desired)
 
-def load_images(desired, normal=None, hover=None, pressed=None, cache=True, master=None):
+class _NoDesired(Exception):
+	pass
+
+# pylint: disable-msg=too-many-locals
+def adjust_images(image_cls, filepaths, desired):
+	"""Adjust images to desired hue"""
+	is_hue = isinstance(desired, int)
+
+	for image in (image_cls.open(filepath).convert('RGBA') for filepath in filepaths):
+		if is_hue:
+			# Extract alpha channel, convert to HSV, set H to hue, convert to RGB, merge alpha channel back in
+			alpha = image.getchannel('A')
+			image = image.convert('HSV')
+
+			pixels = image.load()
+			for x in range(image.size[0]):
+				for y in range(image.size[1]):
+					# Only change hue
+					pixels[x, y] = (desired, *pixels[x, y][1:])
+
+			rgb = image.convert('RGB').split()
+			image = image_cls.merge('RGBA', (*rgb, alpha))
+
+		else:
+			# Get RGB difference between center pixel and desired color, only factoring in Hue,
+			# then modify all pixels by that difference.
+			pixels = image.load()
+			center = pixels[tuple(cord // 2 for cord in image.size)]
+
+			# Get H from desired and SL from center
+			_, saturation, lightness = colorsys.rgb_to_hsv(center[0], center[1], center[2])
+			hue, _, __ = colorsys.rgb_to_hsv(desired[0], desired[1], desired[2])
+
+			# Convert HSV floats to ints, calculate diff between colors
+			rgb = map(int, colorsys.hsv_to_rgb(hue, saturation, lightness))
+			changes = tuple(offset - center[i] for i, offset in enumerate((*rgb, desired[3])))
+
+			for x in range(image.size[0]):
+				for y in range(image.size[1]):
+					pixels[x, y] = tuple(pixels[x, y][k] + changes[k] for k in range(4))
+
+		yield image
+
+def load_images(filepaths, desired, cache=True, master=None):
 	"""Return images - either from cache or from filepaths
 
 	The type of desired determines how to set the image colors:
 		int: Hue
 		sequence: RGBA
 	"""
-	filepaths = normal, hover, pressed
-
 	try:
+		# pylint: disable=import-outside-toplevel
 		from PIL import ImageTk, Image
+
 		if desired is None:
-			raise Exception()
-	except (ModuleNotFoundError, Exception) as exception:
+			raise _NoDesired()
+	except (ModuleNotFoundError, _NoDesired) as exception:
 		if isinstance(exception, ModuleNotFoundError):
 			print('Unable to use custom image colors as "Pillow" has not been installed')
 
@@ -38,49 +82,11 @@ def load_images(desired, normal=None, hover=None, pressed=None, cache=True, mast
 	if all(cache_name in IMAGE_CACHE for cache_name in cache_names):
 		return [IMAGE_CACHE[cache_name] for cache_name in cache_names]
 
-	is_hue = isinstance(desired, int)
-
-	adjusted = []
-	for image in (Image.open(filepath).convert('RGBA') for filepath in filepaths):
-		if is_hue:
-			# Extract alpha channel, convert to HSV, set H to hue, convert to RGB, merge alpha channel back in
-			alpha = image.getchannel('A')
-			image = image.convert('HSV')
-
-			pixels = image.load()
-			for i in range(image.size[0]):
-				for j in range(image.size[1]):
-					# Only change hue
-					pixels[i,j] = (desired, *pixels[i,j][1:])
-
-			rgb = image.convert('RGB').split()
-			image = Image.merge('RGBA', (*rgb, alpha))
-
-		else:
-			# Get RGB difference between center pixel and desired color, only factoring in Hue,
-			# then modify all pixels by that difference.
-			pixels = image.load()
-			center = pixels[tuple(cord // 2 for cord in image.size)]
-			print(center)
-
-			# Get H from desired and SL from center
-			_, saturation, lightness = colorsys.rgb_to_hsv(center[0], center[1], center[2])
-			hue, _, __ = colorsys.rgb_to_hsv(desired[0], desired[1], desired[2])
-
-			# Convert HSV floats to ints, calculate diff between colors
-			rgb = map(int, colorsys.hsv_to_rgb(hue, saturation, lightness))
-			changes = tuple(offset - center[i] for i, offset in enumerate((*rgb, desired[3])))
-
-			for i in range(image.size[0]):
-				for j in range(image.size[1]):
-					pixels[i,j] = tuple(pixels[i,j][k] + changes[k] for k in range(4))
-
-		adjusted.append(image)
-
-	# Add to cache
-	photo_images = [ImageTk.PhotoImage(image, master=master) for image in adjusted]
+	# Adjust, then add to cache
+	photo_images = [ImageTk.PhotoImage(image, master=master) for image in adjust_images(Image, filepaths, desired)]
 	for i in range(len(filepaths)):
 		IMAGE_CACHE[cache_names[i]] = photo_images[i]
+
 	return photo_images
 
 

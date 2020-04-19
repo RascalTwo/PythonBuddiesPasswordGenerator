@@ -1,6 +1,11 @@
-# Generates easy to remember password
+# pylint: disable=invalid-name
+"""Generator for easy to remember passwords"""
+import random
+
+
+# pylint: disable=too-many-branches,too-many-statements,too-many-locals
 def passwordIncorporatesName(length, name, birth_year):
-    import random
+    """Generate password incorporating a name and birth year"""
 
     alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     alpha = list(alphabet)  # Alphabets the program will choose from
@@ -48,9 +53,9 @@ def passwordIncorporatesName(length, name, birth_year):
     # decrease the possibility of getting same password twice
     # this random variable will decide how many characters will be case swapped
 
-    rand2 = random.randrange(1,3,1) #random variable between 1 to 2
+    rand2 = random.randrange(1, 3, 1) #random variable between 1 to 2
 
-    for i in range(0,rand2):
+    for _ in range(0, rand2):
         rand1 = random.randrange(0, len(name), 1) # random index number whose case will be swapped.
 
         # Below 4 line will result in swapping of cases
@@ -60,9 +65,9 @@ def passwordIncorporatesName(length, name, birth_year):
         elif ord(user_name[rand1]) >= 65 and ord(user_name[rand1]) <= 90:
             user_name[rand1] = chr(ord(user_name[rand1]) + 32)
 
-    for i in range(length - len(user_name) - len(birth_year)): # 4-6 extra characters will be added
-        flag_list = random.randrange(0,3,1) # Will decide whether extra character will be a prefix or suffix
-        flag_char = random.randrange(0,2,1) # Will decide if extra character is a number or special character
+    for _ in range(length - len(user_name) - len(birth_year)): # 4-6 extra characters will be added
+        flag_list = random.randrange(0, 3, 1) # Will decide whether extra character will be a prefix or suffix
+        flag_char = random.randrange(0, 2, 1) # Will decide if extra character is a number or special character
 
         if flag_list == 0:
             if flag_char == 0:
@@ -81,15 +86,15 @@ def passwordIncorporatesName(length, name, birth_year):
     # If length of password is less than variable length , extra characters will be added to make it longer
 
     if len(password) < length:
-        for i in range(0,length-len(password)):
-            flag_inc = random.randrange(0, 2,1) # Will decide if extra character is added to prefix or suffix
+        for _ in range(0, length-len(password)):
+            flag_inc = random.randrange(0, 2, 1) # Will decide if extra character is added to prefix or suffix
 
             if flag_inc == 1:
-                prefix.insert(random.randrange(0, len(prefix),1) if prefix else 0, random.choice(alpha))
+                prefix.insert(random.randrange(0, len(prefix), 1) if prefix else 0, random.choice(alpha))
             else:
-                suffix.insert(random.randrange(0, len(suffix),1) if suffix else 0, random.choice(alpha))
+                suffix.insert(random.randrange(0, len(suffix), 1) if suffix else 0, random.choice(alpha))
 
-    flag_order = random.randrange(0,2) # Will decide the order of joining of different lists
+    flag_order = random.randrange(0, 2) # Will decide the order of joining of different lists
 
     if flag_order == 0:
         password = "".join(prefix) + "".join(user_name) + "".join(birth_year) + "".join(suffix)

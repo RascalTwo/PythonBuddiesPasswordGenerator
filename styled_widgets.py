@@ -1,3 +1,5 @@
+"""Dynamically-styled custom widgets"""
+
 from collections import defaultdict
 
 from class_buttons import ImageButton
