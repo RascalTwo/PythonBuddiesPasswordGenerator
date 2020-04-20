@@ -1,5 +1,7 @@
 # Python Buddies Tkinter Password Generator
 
+[![Run on Repl.it](https://repl.it/badge/github/RascalTwo/PythonBuddiesPasswordGenerator)](https://repl.it/github/RascalTwo/PythonBuddiesPasswordGenerator)
+
 Password generator with `tkinter` GUI
 
 ## Installation
@@ -18,7 +20,6 @@ To edit the style colors, either open `config.json` or run `python3 color_editor
 
 Watch this video [here](https://youtu.be/1wepX5_ptTA).
 If you need aditional help, join the [Python Buddies](https://discord.gg/ED8kU5K) Discord server and ask the contributors.
-Also check out the [Repl.it](https://repl.it/@RascalTwo/PythonBuddiesPasswordGenerator).
 
 ## Contributors
 
